@@ -69,7 +69,7 @@ h2 {
 .main__box {
 	margin: 0 auto;
 	max-width: 800px;
-	height: 540px;
+	height: 420px;
 	box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.1);
 	border-radius: 30px;
 }
@@ -106,6 +106,17 @@ h2 {
 	flex-direction: column;
 	overflow-y: auto;
 	max-height: 100%;
+}
+
+.selection__list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.selection__list::-webkit-scrollbar-thumb {
+	background: #8C8C8C;
+	opacity: 0.1;
+	border-radius: 8px;
+	height: 228px;
 }
 
 .selection__item {
@@ -152,4 +163,8 @@ h2 {
 	font-size: 12px;
 	color: #8C8C8C;
 	line-height: 110%;
+}
+
+.main__box-question {
+	padding: 60px 120px;
 }
