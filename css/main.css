@@ -98,6 +98,13 @@ h2 {
 	background-color: transparent;
 	display: block;
 	margin: 0 auto;
+	transition-property: background-color, color;
+	transition-duration: 0.24s;
+	transition-timing-function: ease-in-out;
+}
+
+.main__btn:hover {
+	background-color: #cce2e7;
 }
 
 .selection {
@@ -134,7 +141,7 @@ h2 {
 .selection__theme {
 	width: 100%;
 	max-width: 520px;
-	background: #F1F9FB;
+	background-color: #F1F9FB;
 	border-radius: 12px;
 	border: none;
 	font-size: 22px;
@@ -142,6 +149,13 @@ h2 {
 	text-align: left;
 	padding: 16px 20px;
 	overflow: hidden;
+	transition-property: background-color, color;
+	transition-duration: 0.24s;
+	transition-timing-function: ease-in-out;
+}
+
+.selection__theme:hover {
+	background-color: #cce2e7;
 }
 
 .selection__theme:not(:last-child) {
@@ -373,5 +387,54 @@ h2 {
 
 	.main__box {
 		padding: 40px;
+	}
+
+	.selection__list {
+		padding-right: 15px;
+	}
+
+	.selection__item {
+		margin-bottom: 10px;
+	}
+
+	.selection__result {
+		display: flex;
+		align-items: center;
+	}
+
+	.selection__result-text {
+		display: none;
+	}
+
+	.selection__theme:not(:last-child) {
+		margin-right: 15px;
+	}
+}
+
+@media (max-width: 560px) {
+	.main__btn:not(.result__return) {
+		margin-left: 0;
+		min-width: 100%;
+	}
+
+	.main__form-question::after {
+		bottom: -35px;
+	}
+
+	.main__subtitle {
+		font-size: 20px;
+	}
+
+	.main {
+		padding: 30px 10px;
+	}
+
+	.main__box {
+		padding: 15px;
+		border-radius: 15px;
+	}
+
+	.selection__result-ratio {
+		font-size: 15px;
 	}
 }
