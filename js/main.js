@@ -231,7 +231,7 @@ const showResult = (result, quiz) => {
 
 	let ratio = 0;
 	for (let i = 0; i < quiz.list.length; i++) {
-		if (percent >= quiz.result[i]) {
+		if (percent >= quiz.result[i][0]) {
 			ratio = i;
 		}
 	}
