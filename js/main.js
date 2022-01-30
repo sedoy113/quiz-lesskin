@@ -1,1 +1,350 @@
-console.log('hello');
+'use strict';
+
+const main = document.querySelector('.main');
+const selection = document.querySelector('.selection');
+const title = document.querySelector('.main__title');
+
+// база данных
+const getData = () => {
+	const dataBase = [
+		{
+			"id": "01",
+			"theme": "Тема01",
+			"result": [
+				[40, 'Есть задатки'],
+				[80, 'Очень хорошо'],
+				[100, 'Отлично']
+			],
+			"list": [
+				{
+					"type": "checkbox",
+					"question": "Вопрос 1 Тема 1",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "radio",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "неправильный", "неправильный", "неправильный"
+					],
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				}
+			]
+		},
+		{
+			"id": "02",
+			"theme": "Тема02",
+			"result": [
+				[30, 'Есть задатки'],
+				[60, 'Очень хорошо'],
+				[100, 'Отлично']
+			],
+			"list": [
+				{
+					"type": "radio",
+					"question": "Вопрос 1 Тема 2",
+					"answers": [
+						"правильный1", "неправильный", "неправильный", "неправильный"
+					],
+					"correct": 1,
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "radio",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "неправильный", "неправильный", "неправильный"
+					],
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				},
+				{
+					"type": "checkbox",
+					"question": "Вопрос",
+					"answers": [
+						"правильный1", "правильный2", "неправильный", "неправильный"
+					],
+					"correct": 2,
+
+				}
+			]
+		}
+	];
+	return dataBase;
+};
+
+
+
+// скрываем поле с кнопками после нажатия
+const hideElem = (elem) => {
+	let opacity = getComputedStyle(elem).getPropertyValue('opacity');
+
+	const animation = () => {
+		opacity -= 0.05;
+		elem.style.opacity = opacity;
+		if (opacity > 0) {
+			requestAnimationFrame(animation);
+		} else {
+			elem.style.display = 'none';
+		}
+	};
+	requestAnimationFrame(animation);
+};
+
+// рендер элементов и вывод в верстку
+const renderTheme = (themes) => {
+	const list = document.querySelector('.selection__list');
+	list.textContent = '';
+
+	const buttons = [];
+
+
+	for (let i = 0; i < themes.length; i++) {
+		const li = document.createElement('li');
+		li.className = 'selection__item';
+
+		const button = document.createElement('button');
+		button.className = 'selection__theme';
+		button.dataset.id = themes[i].id;
+		button.textContent = themes[i].theme;
+
+		li.append(button);
+		list.append(li);
+
+		buttons.push(button);
+
+	}
+	return buttons;
+};
+
+const shuffle = (array) => {
+	const newArray = [...array];
+	for (let i = newArray.length - 1; i > 0; i--) {
+		let j = Math.floor(Math.random() * (i + 1));
+		[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+	}
+	return newArray;
+};
+
+const createKeyAnswers = (data) => {
+	const keys = [];
+
+	for (let i = 0; i < data.answers.length; i++) {
+		if (data.type === 'radio') {
+			keys.push([data.answers[i], !i]);
+		} else {
+			keys.push([data.answers[i], i < data.correct])
+		}
+	}
+	return shuffle(keys);
+};
+
+const createAnswer = (data) => {
+	const type = data.type;
+	const answers = createKeyAnswers(data);
+
+	const labels = answers.map((item, i) => {
+		const label = document.createElement('label');
+		label.className = 'answer';
+
+		const input = document.createElement('input');
+		input.type = type;
+		input.name = 'answer';
+		input.className = `answer__${type}`;
+		input.value = i;
+
+		const text = document.createTextNode(item[0]);
+
+		label.append(input, text);
+
+		return label;
+	});
+	const keys = answers.map(answer => answer[1]);
+	return {
+		labels,
+		keys
+	}
+};
+
+const showResult = (result, quiz) => {
+	const block = document.createElement('div');
+	block.className = 'main__box main__box-result result';
+
+	const percent = result / quiz.list.length * 100;
+
+	let ratio = 0;
+	for (let i = 0; i < quiz.list.length; i++) {
+		if (percent >= quiz.result[i]) {
+			ratio = i;
+		}
+	}
+
+	block.innerHTML = `
+		<h2 class="main__subtitle main__subtitle-result">Ваш результат</h2>
+		<div class="result__box">
+			<p class="result__ratio result__ratio_${ratio + 1}">${result}/${quiz.list.length}</p>
+			<p class="result__text">${quiz.result[ratio][1]}</p>
+		</div>
+		`;
+
+	const button = document.createElement('button');
+	button.className = 'main__btn result__return';
+	button.textContent = 'К списку квизов';
+
+	block.append(button);
+	main.append(block);
+
+};
+
+const renderQuiz = (quiz) => {
+	hideElem(title);
+	hideElem(selection);
+
+	const questionBox = document.createElement('div');
+	questionBox.className = 'main__box main__box-question';
+
+	main.append(questionBox);
+
+
+	let result = 0;
+	let questionCount = 0;
+
+	const showQuestion = () => {
+		const data = quiz.list[questionCount];
+		questionCount += 1;
+
+		questionBox.textContent = '';
+		const form = document.createElement('form');
+		form.className = 'main__form-question';
+		form.dataset.count = `${questionCount}/${quiz.list.length}`;
+
+		const fieldset = document.createElement('fieldset');
+		const legend = document.createElement('legend');
+		legend.className = 'main__subtitle';
+		legend.textContent = data.question;
+
+		const answersData = createAnswer(data);
+
+		const button = document.createElement('button');
+		button.className = 'main__btn question__next';
+		button.type = 'submit';
+		button.textContent = 'Подтвердить';
+
+		fieldset.append(legend, ...answersData.labels);
+		form.append(fieldset, button);
+		questionBox.append(form);
+
+		form.addEventListener('submit', (event) => {
+			// отключить стандартное браузерное поведение
+			event.preventDefault();
+
+			let ok = false;
+			const answer = [...form.answer].map((input) => {
+				if (input.checked) ok = true;
+				return input.checked ? input.value : false;
+			});
+
+			if (ok) {
+
+				if (answer.every((result, i) => !!result === answersData.keys[i])) {
+					result += 1;
+				}
+
+				if (questionCount < quiz.list.length) {
+					showQuestion();
+				} else {
+					hideElem(questionBox);
+					showResult(result, quiz);
+				}
+
+			} else {
+				form.classList.add('main__form-question_error');
+				setTimeout(() => {
+					form.className.remove('main__form-question_error');
+				}, 1000)
+			}
+
+		})
+
+	};
+	showQuestion();
+};
+
+const addClick = (buttons, data) => {
+	buttons.forEach(buttons => {
+		buttons.addEventListener('click', () => {
+			const quiz = data.find(item => item.id === buttons.dataset.id)
+			renderQuiz(quiz);
+		});
+	});
+};
+
+// тут  пишем логику самого приложения
+const initQuiz = () => {
+	const data = getData();
+	const buttons = renderTheme(data);
+
+	// функция события по клику на кнопку открывать вопросы
+	addClick(buttons, data);
+
+};
+
+
+initQuiz();
