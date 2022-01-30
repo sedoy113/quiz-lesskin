@@ -6,128 +6,7 @@ const title = document.querySelector('.main__title');
 
 // база данных
 const getData = () => {
-	const dataBase = [
-		{
-			"id": "01",
-			"theme": "Тема01",
-			"result": [
-				[40, 'Есть задатки'],
-				[80, 'Очень хорошо'],
-				[100, 'Отлично']
-			],
-			"list": [
-				{
-					"type": "checkbox",
-					"question": "Вопрос 1 Тема 1",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "radio",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "неправильный", "неправильный", "неправильный"
-					],
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				}
-			]
-		},
-		{
-			"id": "02",
-			"theme": "Тема02",
-			"result": [
-				[30, 'Есть задатки'],
-				[60, 'Очень хорошо'],
-				[100, 'Отлично']
-			],
-			"list": [
-				{
-					"type": "radio",
-					"question": "Вопрос 1 Тема 2",
-					"answers": [
-						"правильный1", "неправильный", "неправильный", "неправильный"
-					],
-					"correct": 1,
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "radio",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "неправильный", "неправильный", "неправильный"
-					],
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				},
-				{
-					"type": "checkbox",
-					"question": "Вопрос",
-					"answers": [
-						"правильный1", "правильный2", "неправильный", "неправильный"
-					],
-					"correct": 2,
-
-				}
-			]
-		}
-	];
-	return dataBase;
+	return fetch('db/quiz_db.json').then(response => response.json());
 };
 
 
@@ -231,7 +110,7 @@ const showResult = (result, quiz) => {
 
 	let ratio = 0;
 	for (let i = 0; i < quiz.list.length; i++) {
-		if (percent >= quiz.result[i][0]) {
+		if (percent >= quiz.result[i]) {
 			ratio = i;
 		}
 	}
@@ -337,8 +216,8 @@ const addClick = (buttons, data) => {
 };
 
 // тут  пишем логику самого приложения
-const initQuiz = () => {
-	const data = getData();
+const initQuiz = async () => {
+	const data = await getData();
 	const buttons = renderTheme(data);
 
 	// функция события по клику на кнопку открывать вопросы
