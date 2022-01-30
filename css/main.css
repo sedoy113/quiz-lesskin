@@ -187,6 +187,7 @@ h2 {
 }
 
 .main__box-question {
+	opacity: 0;
 	padding: 60px 120px;
 	height: auto;
 	min-height: 540px;
@@ -322,6 +323,7 @@ h2 {
 }
 
 .main__box-result {
+	opacity: 0;
 	padding: 60px;
 	display: flex;
 	height: auto;

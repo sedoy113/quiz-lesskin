@@ -13,7 +13,7 @@ const showElem = (elem) => {
 	elem.style.display = '';
 
 	const animation = () => {
-		opacity += 0.5;
+		opacity += 0.05;
 		elem.style.opacity = opacity;
 		if (opacity < 1) {
 			requestAnimationFrame(animation);
@@ -28,7 +28,7 @@ const hideElem = (elem, cb) => {
 	let opacity = getComputedStyle(elem).getPropertyValue('opacity');
 
 	const animation = () => {
-		opacity -= 0.5;
+		opacity -= 0.05;
 		elem.style.opacity = opacity;
 		if (opacity > 0) {
 			requestAnimationFrame(animation);
@@ -162,24 +162,25 @@ const showResult = (result, quiz) => {
 
 	block.append(button);
 	main.append(block);
+	showElem(block);
 
 	button.addEventListener('click', () => {
-		hideElem(block, () => {
-			showElem(title);
-			showElem(selection);
-		})
+		hideElem(block, initQuiz);
 	})
 
 };
 
 const renderQuiz = (quiz) => {
-	hideElem(title);
-	hideElem(selection);
-
 	const questionBox = document.createElement('div');
 	questionBox.className = 'main__box main__box-question';
 
-	main.append(questionBox);
+	hideElem(title);
+	hideElem(selection, () => {
+		showElem(questionBox);
+		main.append(questionBox);
+	});
+
+
 
 
 	let result = 0;
@@ -229,9 +230,10 @@ const renderQuiz = (quiz) => {
 				if (questionCount < quiz.list.length) {
 					showQuestion();
 				} else {
-					hideElem(questionBox);
-					showResult(result, quiz);
 					saveResult(result, quiz.id);
+					hideElem(questionBox, () => {
+						showResult(result, quiz);
+					});
 				}
 
 			} else {
@@ -258,6 +260,9 @@ const addClick = (buttons, data) => {
 
 // тут  пишем логику самого приложения
 const initQuiz = async () => {
+
+	showElem(selection, title);
+
 	const data = await getData();
 	const buttons = renderTheme(data);
 
