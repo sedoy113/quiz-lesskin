@@ -5,23 +5,36 @@ const selection = document.querySelector('.selection');
 const title = document.querySelector('.main__title');
 
 // база данных
-const getData = () => {
-	return fetch('db/quiz_db.json').then(response => response.json());
+const getData = () => fetch('db/quiz_db.json').then(response => response.json());
+
+const showElem = (elem) => {
+	let opacity = 0;
+	elem.opacity = opacity;
+	elem.style.display = '';
+
+	const animation = () => {
+		opacity += 0.5;
+		elem.style.opacity = opacity;
+		if (opacity < 1) {
+			requestAnimationFrame(animation);
+		}
+	};
+
+	requestAnimationFrame(animation);
 };
 
-
-
 // скрываем поле с кнопками после нажатия
-const hideElem = (elem) => {
+const hideElem = (elem, cb) => {
 	let opacity = getComputedStyle(elem).getPropertyValue('opacity');
 
 	const animation = () => {
-		opacity -= 0.05;
+		opacity -= 0.5;
 		elem.style.opacity = opacity;
 		if (opacity > 0) {
 			requestAnimationFrame(animation);
 		} else {
 			elem.style.display = 'none';
+			if (cb) cb();
 		}
 	};
 	requestAnimationFrame(animation);
@@ -43,8 +56,20 @@ const renderTheme = (themes) => {
 		button.className = 'selection__theme';
 		button.dataset.id = themes[i].id;
 		button.textContent = themes[i].theme;
-
 		li.append(button);
+
+		const result = loadResult(themes[i].id)
+		if (result) {
+			const p = document.createElement('p');
+			p.className = 'selection__result';
+			p.innerHTML = `
+					<span class="selection__result-ratio">${result}/${themes[i].list.length}</span>
+					<span class="selection__result-text">Последний результат</span>
+			`;
+			li.append(p);
+		}
+
+
 		list.append(li);
 
 		buttons.push(button);
@@ -60,6 +85,14 @@ const shuffle = (array) => {
 		[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
 	}
 	return newArray;
+};
+
+const saveResult = (result, id) => {
+	localStorage.setItem(id, result);
+};
+
+const loadResult = (id) => {
+	return localStorage.getItem(id);
 };
 
 const createKeyAnswers = (data) => {
@@ -109,8 +142,8 @@ const showResult = (result, quiz) => {
 	const percent = result / quiz.list.length * 100;
 
 	let ratio = 0;
-	for (let i = 0; i < quiz.list.length; i++) {
-		if (percent >= quiz.result[i]) {
+	for (let i = 0; i < quiz.result.length; i++) {
+		if (percent >= quiz.result[i][0]) {
 			ratio = i;
 		}
 	}
@@ -129,6 +162,13 @@ const showResult = (result, quiz) => {
 
 	block.append(button);
 	main.append(block);
+
+	button.addEventListener('click', () => {
+		hideElem(block, () => {
+			showElem(title);
+			showElem(selection);
+		})
+	})
 
 };
 
@@ -191,6 +231,7 @@ const renderQuiz = (quiz) => {
 				} else {
 					hideElem(questionBox);
 					showResult(result, quiz);
+					saveResult(result, quiz.id);
 				}
 
 			} else {
